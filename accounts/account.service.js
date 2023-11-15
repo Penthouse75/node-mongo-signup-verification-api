@@ -89,7 +89,9 @@ async function register(params, origin) {
     // first registered account is an admin
     const isFirstAccount = (await db.Account.countDocuments({})) === 0;
     account.role = isFirstAccount ? Role.Admin : Role.User;
-    account.verificationToken = randomTokenString();
+    //ooc account.verificationToken = randomTokenString();
+    account.verified = Date.now();
+    account.verificationToken = undefined;
 
     // hash password
     account.passwordHash = hash(params.password);
@@ -98,7 +100,7 @@ async function register(params, origin) {
     await account.save();
 
     // send email
-    await sendVerificationEmail(account, origin);
+    //ooc await sendVerificationEmail(account, origin);
 }
 
 async function verifyEmail({ token }) {
@@ -120,7 +122,7 @@ async function forgotPassword({ email }, origin) {
     // create reset token that expires after 24 hours
     account.resetToken = {
         token: randomTokenString(),
-        expires: new Date(Date.now() + 24*60*60*1000)
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
     };
     await account.save();
 
@@ -235,7 +237,7 @@ function generateRefreshToken(account, ipAddress) {
     return new db.RefreshToken({
         account: account.id,
         token: randomTokenString(),
-        expires: new Date(Date.now() + 7*24*60*60*1000),
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         createdByIp: ipAddress
     });
 }
