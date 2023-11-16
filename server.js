@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const errorHandler = require('_middleware/error-handler');
 
+global.__basedir = __dirname;
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -18,6 +20,9 @@ app.use('/accounts', require('./accounts/accounts.controller'));
 
 // swagger docs route
 app.use('/api-docs', require('_helpers/swagger'));
+
+const initRoutes = require("./file-uploads/routes");
+initRoutes(app);
 
 // global error handler
 app.use(errorHandler);
